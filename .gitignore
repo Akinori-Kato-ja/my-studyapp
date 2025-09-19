@@ -1,0 +1,39 @@
+# Python関連
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# 環境変数や設定ファイル
+.env
+*.env
+
+# メディア、静的ファイル
+/media/
+static/*
+!static/css/
+!static/css/*
+!static/js/
+!static/js/*
+!static/images/
+!static/images/*
+
+# ログファイル
+*.log
+logs/
+!logs/.gitkeep
+
+# IDE、エディタ
+.vscode/
+
+# MacOS関連
+.DS_Store
+
+# Django
+*.pot
+
+# バックアップ
+backup/
+
+# 開発メモ
+dev_notes/

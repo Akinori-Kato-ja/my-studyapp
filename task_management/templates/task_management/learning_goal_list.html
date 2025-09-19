@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Learning Goals|ASCENSION{% endblock title %}
+{% block body_class %}white-page{% endblock  %}
+
+{% block contents %}
+<div class='container'>
+    <div class='my-div-style'>
+        <div>
+            <h1 class='mb-4'>{{ user.username }}'s Learning Goals</h1>
+        </div>
+        <div>
+            <ul>
+                {% for learning_goal in learning_goals %}
+                    <div>
+                        <a href="">
+                            <li>{{ learning_goal.title }}</li>
+                        </a>
+                        <a href="">DELETE</a>
+                    </div>
+                {% empty %}
+                    <p>No learning goals registered</p>
+                {% endfor %}
+                <div>
+                    <a class='btn btn-primary' href="">ADD</a>
+                </div>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock contents %}
