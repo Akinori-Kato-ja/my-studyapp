@@ -15,15 +15,17 @@
                 {% for category in interest_categories %}
                     <div>
                         <a href="">
-                            <li>{{ category.name }}</li>
+                            <li>{{ category.name }}</li><br>
                         </a>
-                        <a href="">DELETE</a>
                     </div>
                 {% empty %}
                     <p>There are no interest categories registered.</p>
                 {% endfor %}
-                <div>
-                    <a class='btn btn-primary' href="{% url "task_management:add_interest_category" %}">ADD</a>
+                <div class='d-flex gap-2 mb-4'>
+                    <a href="{% url "task_management:add_interest_category" %}" class='btn btn-primary'>ADD</a>
+                    {% if interest_categories %}
+                        <a href="{% url "#" %}" class='btn btn-danger'>DELETE</a>
+                    {% endif %}
                 </div>
             </ul>
         </div>

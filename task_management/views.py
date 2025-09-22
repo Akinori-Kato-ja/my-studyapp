@@ -39,6 +39,8 @@ class AddInterestCategoryView(LoginRequiredMixin, generic.FormView):
 # Delete: Interest Category
 class DeleteInterestCategoryView(LoginRequiredMixin, generic.DeleteView):
     model = UserInterestCategory
+    template_name = 'task_management/delete_interest_category.html'
+    
 
 
 # List: Learning Goal

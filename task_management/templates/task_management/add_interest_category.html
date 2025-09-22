@@ -11,8 +11,19 @@
             <h1 class='mb-4'>Add Interest Category</h1>
             <p>Register the categories that interest you.</p>
         </div>
-        <form action="">
-            
+        <form action="{% url "task_management:add_interest_category" %}" method='POST'>
+            {% csrf_token %}
+
+            <div class='mb-4'>
+                {{ form.category.label_tag }}
+                {{ form.category }}
+                {% if form.category.errors %}
+                    <div class='invalid-feedback d-block'>
+                        {{ form.category.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            <button type='submit' class='btn btn-primary mb-4'>ADD</button>
         </form>
     </div>
 </div>
