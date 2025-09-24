@@ -15,12 +15,12 @@ class IndexView(generic.TemplateView):
 
 # List page: Interest Category
 class InterestCategoryListView(LoginRequiredMixin, generic.ListView):
-    model = CustomUser
+    model = UserInterestCategory
     template_name = 'task_management/interest_categories.html'
     context_object_name = 'interest_categories'
 
     def get_queryset(self):
-        return self.request.user.interest_categories.all()
+        return UserInterestCategory.objects.filter(user=self.request.user)
 
 
 # Add: Interest Category
@@ -40,7 +40,7 @@ class AddInterestCategoryView(LoginRequiredMixin, generic.FormView):
 class DeleteInterestCategoryView(LoginRequiredMixin, generic.DeleteView):
     model = UserInterestCategory
     template_name = 'task_management/delete_interest_category.html'
-    
+    success_url = reverse_lazy('task_management:interest_categories')
 
 
 # List: Learning Goal
