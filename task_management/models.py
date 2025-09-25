@@ -38,10 +38,34 @@ class UserInterestCategory(models.Model):
         verbose_name_plural = 'User Interest Categories'
 
 
-# User learning goal
+# Draft model before generating LearningTopics
+class DraftLearningGoal(models.Model):
+    user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    title = models.CharField(max_length=255)
+    current_level = models.TextField(blank=True, null=True)
+    target_level = models.TextField(blank=True, null=True)
+
+    raw_generated_data = models.JSONField(blank=True, null=True)
+    is_finalized = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"[Draft]{self.title}"
+
+    class Meta:
+        verbose_name = 'Draft Learning Goal'
+        verbose_name_plural = 'Draft Learning Goals'
+
+
+# User's learning goal
 class LearningGoal(models.Model):
     user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    draft = models.ForeignKey(DraftLearningGoal, blank=True, null=True, on_delete=models.SET_NULL)
 
     title = models.CharField(max_length=30, help_text='学習目標(タイトル)を入力してください。(必須)')
     current_level = models.TextField(blank=True, null=True, help_text='現在のレベルを入力してください。(任意)')
@@ -65,7 +89,7 @@ class LearningGoal(models.Model):
     class Meta:
         verbose_name = 'Learning Goal'
         verbose_name_plural = 'Learning Goals'
-    
+
 
 # Learning main topics
 class LearningMainTopic(models.Model):
