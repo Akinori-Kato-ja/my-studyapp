@@ -13,7 +13,7 @@ class IndexView(generic.TemplateView):
     template_name = 'task_management/index.html'
 
 
-# List page: Interest Category
+# List: Interest Category
 class InterestCategoryListView(LoginRequiredMixin, generic.ListView):
     model = UserInterestCategory
     template_name = 'task_management/interest_categories.html'
@@ -55,4 +55,4 @@ class LearningGoalListView(LoginRequiredMixin, generic.ListView):
             user=self.request.user,
             category_id=cateogy_id,
         )
-    
+
