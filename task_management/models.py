@@ -1,7 +1,6 @@
 from django.db import models
 
 
-
 # Category list
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -19,7 +18,6 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
-
 
 
 # Intermediate model (CustomUser, Catogory)
@@ -67,10 +65,10 @@ class LearningGoal(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     draft = models.ForeignKey(DraftLearningGoal, blank=True, null=True, on_delete=models.SET_NULL)
 
-    title = models.CharField(max_length=30, help_text='学習目標(タイトル)を入力してください。(必須)')
-    current_level = models.TextField(blank=True, null=True, help_text='現在のレベルを入力してください。(任意)')
-    target_level = models.TextField(blank=True, null=True, help_text='学習目標の詳細を入力してください。(任意)')
-    target_date = models.DateField(blank=True, null=True, help_text='目標学習期日をカレンダーから選択してください。(任意)')
+    title = models.CharField(max_length=30)
+    current_level = models.TextField(blank=True, null=True)
+    target_level = models.TextField(blank=True, null=True)
+    target_date = models.DateField(blank=True, null=True)
     total_score = models.FloatField(blank=True, null=True)
 
     target_study_time = models.FloatField(blank=True, null=True, help_text='目標学習時間(h)')

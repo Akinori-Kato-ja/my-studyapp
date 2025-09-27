@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Setting Learning goal|ASCENSION{% endblock title %}
+{% block body_class %}White-page{% endblock body_class %}
+
+{% block contents %}
+<div class='container'>
+    <div class='my-div-style'>
+        <div>
+            <h1 class='mb-4'>Setting Learning Goal</h1>
+            <p>Set your learning goals</p>
+        </div>
+        {% crispy form %}
+    </div>
+</div>
+{% endblock contents %}
