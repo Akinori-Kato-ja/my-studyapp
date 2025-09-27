@@ -14,7 +14,7 @@
             <ul>
                 {% for ic in interest_categories %}
                     <div class='d-flex mb-4'>
-                        <a href="{% url "task_management:learning_goals" ic.category.id %}">
+                        <a href="{% url "task_management:learning_goals" ic.id %}">
                             <li>{{ ic.category.name }}</li>
                         </a>
                         <a href="{% url "task_management:delete_interest_category" ic.pk %}" class='btn btn-sm'>: delete</a><br>
