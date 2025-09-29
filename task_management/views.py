@@ -1,10 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View, generic
 
 from .forms import AddInterestCategoryForm, SettingLearningGoalForm
-from .models import UserInterestCategory, LearningGoal
+from .models import UserInterestCategory, DraftLearningGoal, LearningGoal
 from accounts.models import CustomUser
 
 
@@ -76,9 +76,31 @@ class LearningGoalListView(LoginRequiredMixin, generic.ListView):
     
 
 # Setting
-class SettingLearningGoalView(generic.FormView):
+class SettingLearningGoalView(generic.CreateView):
+    model = DraftLearningGoal
     form_class = SettingLearningGoalForm
     template_name = 'task_management/setting_learning_goal.html'
     success_url = reverse_lazy('#')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_interest = get_object_or_404(
+            UserInterestCategory,
+            user=self.request.user,
+            id=self.kwargs['user_interest_id']
+        )
+        context['user_interest'] = user_interest
+        return context
+
+    def form_valid(self, form):
+        draft = form.save(commit=False)
+        draft.user = self.request.user
+        draft.category = get_object_or_404(
+            UserInterestCategory,
+            user=self.request.user,
+            id=self.kwargs['user_interest_id']
+        )
+        draft.save()
+        return redirect('')
 
     
