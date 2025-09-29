@@ -2,7 +2,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Submit, Div
 from django import forms
 
-from .models import UserInterestCategory, LearningGoal
+from .models import UserInterestCategory, DraftLearningGoal, LearningGoal
 
 
 # Add: Interest Category
@@ -21,7 +21,7 @@ class AddInterestCategoryForm(forms.ModelForm):
 # Setting: Learning Goal
 class SettingLearningGoalForm(forms.ModelForm):
     class Meta:
-        model = LearningGoal
+        model = DraftLearningGoal
         fields = ['title', 'current_level', 'target_level']
         labels = {
             'title': 'Title *',

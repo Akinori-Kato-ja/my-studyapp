@@ -63,7 +63,7 @@ class DraftLearningGoal(models.Model):
 class LearningGoal(models.Model):
     user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    draft = models.ForeignKey(DraftLearningGoal, blank=True, null=True, on_delete=models.SET_NULL)
+    draft = models.OneToOneField(DraftLearningGoal, blank=True, null=True, on_delete=models.SET_NULL)
 
     title = models.CharField(max_length=30)
     current_level = models.TextField(blank=True, null=True)
