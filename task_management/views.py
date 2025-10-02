@@ -101,6 +101,4 @@ class SettingLearningGoalView(generic.CreateView):
             id=self.kwargs['user_interest_id']
         )
         draft.save()
-        return redirect('')
-
-    
+        return redirect('generate_learning_topic', draft_id=draft.id)
