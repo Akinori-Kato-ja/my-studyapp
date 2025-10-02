@@ -99,8 +99,7 @@ class LearningMainTopic(models.Model):
     user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
     learning_goal = models.ForeignKey(LearningGoal, on_delete=models.CASCADE)
 
-    main_topic = models.CharField(max_length=100)
-    completed = models.BooleanField(default=False)
+    main_topic = models.CharField(max_length=255)
     status = models.CharField(
         max_length=20,
         choices=STATUS,
@@ -130,8 +129,7 @@ class LearningSubTopic(models.Model):
         on_delete=models.CASCADE,
     )
 
-    sub_topic = models.CharField(max_length=100)
-    completed = models.BooleanField(default=False)
+    sub_topic = models.CharField(max_length=255)
     status = models.CharField(
         max_length=20,
         choices=STATUS,
