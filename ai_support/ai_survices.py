@@ -17,7 +17,7 @@ def generate_learning_topic(title, current_level='', target_level=''):
         f'Target level:{target_level}'
         '<Creation Rurles>'
         '1. Divide the plan into main topics and subtopics, as shown in the example.'
-        '2. Each subtopic should take ~30–60 minutes of study.'
+        '2. Each subtopic should take ~30-60 minutes of study.'
         '3. Current level and target level are optional but should be considered if provided.'
         '4. If optional inputs are empty, create the most standard learning path.'
         '5. Output must be valid JSON (no extra text).'
@@ -82,9 +82,3 @@ def generate_learning_topic(title, current_level='', target_level=''):
     print(f'generated_learning_topic: {generated_learning_topic}')
 
     return generated_learning_topic
-
-
-title = 'Python株価予測'
-current_level = 'Python基礎構文は習得済み'
-target_level = '株価予測プログラムを作成して、株価取引に使用したい'
-generate_learning_topic(title, current_level, target_level)
