@@ -1,11 +1,13 @@
-import os
 import json
-
+import os
+import re
 from openai import OpenAI
 
 
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+
 def generate_learning_topic(title, current_level='', target_level=''):
-    client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
     prompt = (
         'Please generates a training task based on the following <User Input> and <Creation Rules>.'
@@ -14,12 +16,12 @@ def generate_learning_topic(title, current_level='', target_level=''):
         f'Current level:{current_level}'
         f'Target level:{target_level}'
         '<Creation Rurles>'
-        '1.As shown in the <Example Output>, please divide the tasks into main topics and subtopics. Please generate the data in JSON format.'
-        '2.Please break each subtopic down as much as possible. The recommended study time for each subtopic is about 30 minutes to an hour.'
-        '3.<User Input> requires only a title, other inputs are optional.'
-        'If there are optional inputs, the most optimal task must be generated taking all inputs into account.'
-        'If no optional fields are entered, generate the most orthodox task that matches the title.'
-        "4.Please generate tasks in the same language as the user's input."
+        '1. Divide the plan into main topics and subtopics, as shown in the example.'
+        '2. Each subtopic should take ~30–60 minutes of study.'
+        '3. Current level and target level are optional but should be considered if provided.'
+        '4. If optional inputs are empty, create the most standard learning path.'
+        '5. Output must be valid JSON (no extra text).'
+        '6. Output language should match the input language.'
         '<Example Output>'
         """
 [
@@ -55,10 +57,32 @@ def generate_learning_topic(title, current_level='', target_level=''):
             {'role': 'system', 'content': 'You are an AI assistant that generates optimal study plans based on the learning goals set by the user.'},
             {'role': 'user', 'content': prompt}
         ],
-        max_tokens=2000,
+        max_tokens=1000,
         temperature=0.7
     )
-    print(response)
+
+    raw_content = response.choices[0].message.content.strip()
+    raw_content = raw_content.replace('```json', '').replace('```', '').strip()
+
+    if not raw_content:
+        print('The AI returned an empty response.')
+        return []
+    
+    try:
+        generated_learning_topic = json.loads(raw_content)
+    except json.JSONDecodeError:
+        json_match = re.search(r'\[.*]', raw_content, re.DOTALL)
+        if json_match:
+            json_str = json_match.group(0)
+            generated_learning_topic = json.loads(json_str)
+        else:
+            print('No JSON data was found.')
+            generated_learning_topic = []
+
+    print(f'generated_learning_topic: {generated_learning_topic}')
+
+    return generated_learning_topic
+
 
 
 title = 'Python株価予測'

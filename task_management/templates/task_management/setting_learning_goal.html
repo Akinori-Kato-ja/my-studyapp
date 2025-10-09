@@ -2,13 +2,13 @@
 {% load crispy_forms_tags %}
 
 {% block title %}Setting Learning goal|ASCENSION{% endblock title %}
-{% block body_class %}White-page{% endblock body_class %}
+{% block body_class %}white-page{% endblock body_class %}
 
 {% block contents %}
 <div class='container'>
     <div class='my-div-style'>
         <div>
-            <h1 class='mb-4'>Setting Learning Goal</h1>
+            <h1 class='mb-4'>Setting Learning Goal &lt; Category:{{ user_interest.category.name }}&gt;</h1>
             <p>Set your learning goals for <strong>{{ user_interest.category.name }}</strong>.</p>
         </div>
         {% crispy form %}
