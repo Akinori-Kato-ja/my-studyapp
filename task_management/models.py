@@ -65,11 +65,11 @@ class LearningGoal(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     draft = models.OneToOneField(DraftLearningGoal, blank=True, null=True, on_delete=models.SET_NULL)
 
-    title = models.CharField(max_length=30)
+    title = models.CharField(max_length=255)
     current_level = models.TextField(blank=True, null=True)
     target_level = models.TextField(blank=True, null=True)
     target_date = models.DateField(blank=True, null=True)
-    total_score = models.FloatField(blank=True, null=True)
+    total_score = models.FloatField(blank=True, null=True, default=0)
 
     target_study_time = models.FloatField(blank=True, null=True, help_text='目標学習時間(h)')
     created_at = models.DateTimeField(auto_now_add=True)
