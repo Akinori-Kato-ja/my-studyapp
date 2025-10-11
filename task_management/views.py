@@ -2,6 +2,7 @@ import json
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.text import slugify
 from django.urls import reverse_lazy
 from django.views import View, generic
 
@@ -19,7 +20,7 @@ class IndexView(generic.TemplateView):
 # List page
 class InterestCategoryListView(LoginRequiredMixin, generic.ListView):
     model = UserInterestCategory
-    template_name = 'task_management/interest_categories.html'
+    template_name = 'task_management/interest_category/list.html'
     context_object_name = 'interest_categories'
 
     def get_queryset(self):
@@ -29,7 +30,7 @@ class InterestCategoryListView(LoginRequiredMixin, generic.ListView):
 # Add
 class AddInterestCategoryView(LoginRequiredMixin, generic.FormView):
     form_class = AddInterestCategoryForm
-    template_name = 'task_management/add_interest_category.html'
+    template_name = 'task_management/interest_category/add.html'
     success_url = reverse_lazy('task_management:interest_categories')
 
     def form_valid(self, form):
@@ -42,7 +43,7 @@ class AddInterestCategoryView(LoginRequiredMixin, generic.FormView):
 # Delete
 class DeleteInterestCategoryView(LoginRequiredMixin, generic.DeleteView):
     model = UserInterestCategory
-    template_name = 'task_management/delete_interest_category.html'
+    template_name = 'task_management/interest_category/delete.html'
     success_url = reverse_lazy('task_management:interest_categories')
 
 
@@ -50,7 +51,7 @@ class DeleteInterestCategoryView(LoginRequiredMixin, generic.DeleteView):
 # List page
 class LearningGoalListView(LoginRequiredMixin, generic.ListView):
     model = LearningGoal
-    template_name = 'task_management/learning_goal_list.html'
+    template_name = 'task_management/learning_goal/list.html'
     context_object_name = 'learning_goals'
 
     def get_queryset(self):
@@ -81,8 +82,7 @@ class LearningGoalListView(LoginRequiredMixin, generic.ListView):
 class SettingLearningGoalView(LoginRequiredMixin, generic.CreateView):
     model = DraftLearningGoal
     form_class = SettingLearningGoalForm
-    template_name = 'task_management/setting_learning_goal.html'
-    success_url = reverse_lazy('#')
+    template_name = 'task_management/learning_goal/setting.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -97,18 +97,19 @@ class SettingLearningGoalView(LoginRequiredMixin, generic.CreateView):
     def form_valid(self, form):
         draft = form.save(commit=False)
         draft.user = self.request.user
-        draft.category = get_object_or_404(
+        user_interest = get_object_or_404(
             UserInterestCategory,
             user=self.request.user,
             id=self.kwargs['user_interest_id']
         )
+        draft.category = user_interest.category
         draft.save()
         return redirect('ai_support:generate_learning_topic', draft_id=draft.id)
 
 
 # Preview
 class PreviewGeneratedLearningTopicView(LoginRequiredMixin, generic.TemplateView):
-    template_name = 'task_management/preview_generated_learning_topic.html'
+    template_name = 'task_management/learning_goal/preview.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -118,24 +119,30 @@ class PreviewGeneratedLearningTopicView(LoginRequiredMixin, generic.TemplateView
             id=self.kwargs['draft_id']
         )
 
-        raw_data = draft.raw_generated_data
-        if isinstance(raw_data, list):
-            topics = raw_data
-        elif isinstance(raw_data, str):
+        user_interest = get_object_or_404(
+            UserInterestCategory,
+            user=self.request.user,
+            category=draft.category
+        )
+
+        if isinstance(draft.raw_generated_data, list):
+            topics_data = draft.raw_generated_data
+        elif isinstance(draft.raw_generated_data, str):
             try:
-                topics = json.loads(raw_data)
+                topics_data = json.loads(draft.raw_generated_data)
             except json.JSONDecodeError:
-                topics = []
+                topics_data = []
         else:
-            topics = []
+            topics_data = []
 
         context["draft"] = draft
-        context["topics"] = topics
+        context['user_interest'] = user_interest
+        context["topics"] = topics_data
         return context
 
 
 # Confirm
-class FianalizeLearningGoalView(LoginRequiredMixin, View):
+class FinalizeLearningGoalView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         draft = get_object_or_404(
             DraftLearningGoal,
@@ -144,11 +151,14 @@ class FianalizeLearningGoalView(LoginRequiredMixin, View):
         )
 
         # Load the original generated data
-        try:
-            topics_data = json.loads(draft.raw_generated_data)
-        except json.JSONDecodeError:
-            messages.error(request, 'Generated data is invalid.')
-            return redirect('')
+        if isinstance(draft.raw_generated_data, list):
+            topics_data = draft.raw_generated_data
+        elif isinstance(draft.raw_generated_data, str):
+            try:
+                topics_data = json.loads(draft.raw_generated_data)
+            except json.JSONDecodeError:
+                messages.error(request, 'Generated data is invalid.')
+                return redirect('task_management:goal_preview', draft_id=draft.id)
 
         # Get selected main_topics
         selected_main_topics = request.POST.getlist('main_topics')
@@ -190,6 +200,9 @@ class FianalizeLearningGoalView(LoginRequiredMixin, View):
                     sub_topic=sub['sub_topic']
                 )
 
+        draft.is_finalized = True
+        draft.save()
+
         messages.success(request, 'Learning goal has been successfully saved!')
-        return redirect('task_management:learning_goal_detail', pk=learning_goal.id)
+        return redirect('task_management:goal_detail', goal_id=learning_goal.id)
     

@@ -23,7 +23,7 @@
                     <p>No learning goals registered</p>
                 {% endfor %}
                 <div>
-                    <a class='btn btn-primary mb-4' href="{% url "task_management:setting_learning_goal" user_interest.id %}">ADD</a>
+                    <a class='btn btn-primary mb-4' href="{% url "task_management:goal_set" user_interest.id %}">ADD</a>
                 </div>
             </ul>
         </div>
