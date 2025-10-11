@@ -14,16 +14,16 @@
             <ul>
                 {% for ic in interest_categories %}
                     <div class='d-flex mb-4'>
-                        <a href="{% url "task_management:learning_goals" ic.id %}">
+                        <a href="{% url "task_management:goal_list" ic.id %}">
                             <li>{{ ic.category.name }}</li>
                         </a>
-                        <a href="{% url "task_management:delete_interest_category" ic.pk %}" class='btn btn-sm'>: delete</a><br>
+                        <a href="{% url "task_management:interest_delete" ic.pk %}" class='btn btn-sm'>: delete</a><br>
                     </div>
                 {% empty %}
                     <p>There are no interest categories registered.</p>
                 {% endfor %}
                 <div class='d-flex gap-2 mb-5'>
-                    <a href="{% url "task_management:add_interest_category" %}" class='btn btn-primary'>ADD</a>
+                    <a href="{% url "task_management:interest_add" %}" class='btn btn-primary'>ADD</a>
                 </div>
             </ul>
         </div>

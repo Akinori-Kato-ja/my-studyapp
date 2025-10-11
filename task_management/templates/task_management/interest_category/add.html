@@ -11,7 +11,7 @@
             <h1 class='mb-4'>Add Interest Category</h1>
             <p>Register the categories that interest you.</p>
         </div>
-        <form action="{% url "task_management:add_interest_category" %}" method='POST'>
+        <form action="{% url "task_management:interest_add" %}" method='POST'>
             {% csrf_token %}
 
             <div class='mb-4'>

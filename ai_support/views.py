@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
-from ai_support.ai_survices import generate_learning_topic
+from ai_support.ai_services import generate_learning_topic
 from task_management.models import DraftLearningGoal
 
 
