@@ -4,7 +4,7 @@ from ai_support.ai_services import generate_learning_topic
 from task_management.models import DraftLearningGoal
 
 
-def generate_learning_topic_view(request, draft_id):
+def learning_topic_generate_view(request, draft_id):
     draft = get_object_or_404(
         DraftLearningGoal,
         user=request.user,
@@ -22,5 +22,5 @@ def generate_learning_topic_view(request, draft_id):
     draft.raw_generated_data = generated
     draft.save()
 
-    return redirect('task_management:preview_generated_learning_topic', draft_id=draft.id)
+    return redirect('task_management:goal_preview', draft_id=draft.id)
 
