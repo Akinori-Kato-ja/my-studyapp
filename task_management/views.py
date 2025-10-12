@@ -7,17 +7,23 @@ from django.urls import reverse_lazy
 from django.views import View, generic
 
 from .forms import AddInterestCategoryForm, SettingLearningGoalForm
-from .models import UserInterestCategory, DraftLearningGoal, LearningGoal, LearningMainTopic, LearningSubTopic
+from .models import (
+    UserInterestCategory,
+    DraftLearningGoal,
+    LearningGoal,
+    LearningMainTopic,
+    LearningSubTopic,
+)
 from accounts.models import CustomUser
 
 
-# === Top page ===
+# ===== Top page =====
 class IndexView(generic.TemplateView):
     template_name = 'task_management/index.html'
 
 
-# === Interest category === 
-# List page
+# ===== Interest category =====
+# List
 class InterestCategoryListView(LoginRequiredMixin, generic.ListView):
     model = UserInterestCategory
     template_name = 'task_management/interest_category/list.html'
@@ -27,11 +33,11 @@ class InterestCategoryListView(LoginRequiredMixin, generic.ListView):
         return UserInterestCategory.objects.filter(user=self.request.user)
 
 
-# Add
-class AddInterestCategoryView(LoginRequiredMixin, generic.FormView):
+# Create (User Selection)
+class InterestCategoryCreateView(LoginRequiredMixin, generic.FormView):
     form_class = AddInterestCategoryForm
     template_name = 'task_management/interest_category/add.html'
-    success_url = reverse_lazy('task_management:interest_categories')
+    success_url = reverse_lazy('task_management:interest_list')
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -41,14 +47,14 @@ class AddInterestCategoryView(LoginRequiredMixin, generic.FormView):
     
 
 # Delete
-class DeleteInterestCategoryView(LoginRequiredMixin, generic.DeleteView):
+class InterestCategoryDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = UserInterestCategory
     template_name = 'task_management/interest_category/delete.html'
-    success_url = reverse_lazy('task_management:interest_categories')
+    success_url = reverse_lazy('task_management:interest_list')
 
 
-# === Learning goal === 
-# List page
+# ===== Learning goal =====
+# List 
 class LearningGoalListView(LoginRequiredMixin, generic.ListView):
     model = LearningGoal
     template_name = 'task_management/learning_goal/list.html'
@@ -78,8 +84,8 @@ class LearningGoalListView(LoginRequiredMixin, generic.ListView):
         return context
     
 
-# Set
-class SettingLearningGoalView(LoginRequiredMixin, generic.CreateView):
+# Create (User Input)
+class LearningGoalCreateView(LoginRequiredMixin, generic.CreateView):
     model = DraftLearningGoal
     form_class = SettingLearningGoalForm
     template_name = 'task_management/learning_goal/setting.html'
@@ -104,11 +110,11 @@ class SettingLearningGoalView(LoginRequiredMixin, generic.CreateView):
         )
         draft.category = user_interest.category
         draft.save()
-        return redirect('ai_support:generate_learning_topic', draft_id=draft.id)
+        return redirect('ai_support:topic_generate', draft_id=draft.id)
 
 
-# Preview
-class PreviewGeneratedLearningTopicView(LoginRequiredMixin, generic.TemplateView):
+# Preview (Generated Topic)
+class LearningTopicPreviewView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'task_management/learning_goal/preview.html'
 
     def get_context_data(self, **kwargs):
@@ -141,8 +147,8 @@ class PreviewGeneratedLearningTopicView(LoginRequiredMixin, generic.TemplateView
         return context
 
 
-# Confirm
-class FinalizeLearningGoalView(LoginRequiredMixin, View):
+# Finalize (LearningGoal and LearningTopics)
+class LearningGoalFinalizeView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         draft = get_object_or_404(
             DraftLearningGoal,
@@ -206,3 +212,29 @@ class FinalizeLearningGoalView(LoginRequiredMixin, View):
         messages.success(request, 'Learning goal has been successfully saved!')
         return redirect('task_management:goal_detail', goal_id=learning_goal.id)
     
+
+# Detail
+class LearningGoalDetailView(LoginRequiredMixin, generic.DetailView):
+    model = LearningGoal
+    template_name = 'task_management/learning_goal/detail.html'
+    context_object_name = 'goal'
+    pk_url_kwarg = 'goal_id'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(
+            LearningGoal,
+            id=self.kwargs['goal_id'],
+            user=self.request.user,
+        )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        goal = self.get_object()
+
+        # Get main-topics and sub-topics at the same time
+        main_topics = LearningMainTopic.objects.filter(
+            learning_goal=goal,
+        ).prefetch_related('sub_topics')
+
+        context["main_topics"] = main_topics
+        return context
