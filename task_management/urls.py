@@ -14,5 +14,5 @@ urlpatterns = [
     path('learning-goal/<int:user_interest_id>/set/', views.LearningGoalCreateView.as_view(), name='goal_set'),
     path('learning-goal/<int:draft_id>/preview/', views.LearningTopicPreviewView.as_view(), name='goal_preview'),
     path('learning-goal/<int:draft_id>/finalize/', views.LearningGoalFinalizeView.as_view(), name='goal_finalize'),
-
+    path('learning_goal/<int:goal_id>/detail/', views.LearningGoalDetailView.as_view(), name='goal_detail'),
 ]
