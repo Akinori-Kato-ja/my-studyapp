@@ -15,4 +15,5 @@ urlpatterns = [
     path('learning-goal/<int:draft_id>/preview/', views.LearningTopicPreviewView.as_view(), name='goal_preview'),
     path('learning-goal/<int:draft_id>/finalize/', views.LearningGoalFinalizeView.as_view(), name='goal_finalize'),
     path('learning_goal/<int:goal_id>/detail/', views.LearningGoalDetailView.as_view(), name='goal_detail'),
+    path('learning_goal/<int:pk>/delete/', views.LearningGoalDeleteView.as_view(), name='goal_delete'),
 ]

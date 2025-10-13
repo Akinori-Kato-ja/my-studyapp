@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.text import slugify
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views import View, generic
 
 from .forms import AddInterestCategoryForm, SettingLearningGoalForm
@@ -52,6 +52,16 @@ class InterestCategoryDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = 'task_management/interest_category/delete.html'
     success_url = reverse_lazy('task_management:interest_list')
 
+    def get_object(self, queryset=None):
+        return get_object_or_404(
+            UserInterestCategory,
+            pk=self.kwargs['pk'],
+            user=self.request.user,
+        )
+    
+    def delete(self, request, *args, **kwargs):
+        messages.success(self, request, 'It has been deleted.')
+        return super().delete(request, *args, **kwargs)
 
 # ===== Learning goal =====
 # List 
@@ -243,3 +253,35 @@ class LearningGoalDetailView(LoginRequiredMixin, generic.DetailView):
 
         context["main_topics"] = main_topics
         return context
+
+
+# Delete
+class LearningGoalDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = LearningGoal
+    template_name = 'task_management/learning_goal/delete.html'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(
+            LearningGoal,
+            pk=self.kwargs['pk'],
+            user=self.request.user,
+        )
+    
+    def get_user_interest(self):
+        if not hasattr(self, '_user_interest'):
+            self._user_interest = get_object_or_404(
+                UserInterestCategory,
+                category=self.object.category,
+                user=self.request.user,
+            )
+        return self._user_interest
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["user_interest"] = self.get_user_interest()
+        return context
+    
+    def get_success_url(self):
+        user_interest = self.get_user_interest()
+        messages.success(self.request, 'It has been deleted.')
+        return reverse('task_management:goal_list', kwargs={'user_interest_id': user_interest.id})
