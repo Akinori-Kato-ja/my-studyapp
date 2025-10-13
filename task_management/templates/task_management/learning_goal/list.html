@@ -13,11 +13,11 @@
         <div>
             <ul>
                 {% for learning_goal in learning_goals %}
-                    <div>
-                        <a href='#'>
+                    <div class='d-flex mb-4'>
+                        <a href="{% url "task_management:goal_detail" learning_goal.id %}">
                             <li>{{ learning_goal.title }}</li>
                         </a>
-                        <a href="">DELETE</a>
+                        <a href="" class='btn btn-sm'>:delete</a>
                     </div>
                 {% empty %}
                     <p>No learning goals registered</p>

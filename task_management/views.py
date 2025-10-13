@@ -79,8 +79,13 @@ class LearningGoalListView(LoginRequiredMixin, generic.ListView):
             user=self.request.user,
             id=self.kwargs['user_interest_id']
         )
+        learning_goal = LearningGoal.objects.filter(
+            user=self.request.user,
+            category=user_interest.category
+        )
         context["category"] = user_interest.category
         context['user_interest'] = user_interest
+        context['learning_goal'] = learning_goal
         return context
     
 

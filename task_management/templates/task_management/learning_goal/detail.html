@@ -8,7 +8,28 @@
 <div class='container'>
     <div class='my-div-style'>
         <div>
-            <h1></h1>
+            <h1 class='mb-4'>{{ goal.title }}</h1>
+            <p>Target Level: {{ goal.target_level }}</p>
+            <p>Total Study Time: {{ goal.actual_study_time }}h</p>
+        </div>
+        <h2> &lt; Learning Topics &gt;</h2>
+        {% for main in main_topics %}
+            <div>
+                <h3>・{{ main.main_topic }}</h3>
+                {% if main.sub_topics.all %}
+                    <ul>
+                        {% for sub in main.sub_topics.all %}
+                            <li>{{ sub.sub_topic }}</li>                        
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No Sub topics.</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class='d-flex gap-3 mb-5'>
+            <a href="" class='btn btn-primary'>Lecture</a>
+            <a href="" class='btn btn-info'>Test</a>
         </div>
     </div>
 </div>
