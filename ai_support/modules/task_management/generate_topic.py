@@ -8,7 +8,6 @@ client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 
 def generate_learning_topic(title, current_level='', target_level=''):
-
     prompt = (
         'Please generates a training task based on the following <User Input> and <Creation Rules>.'
         '<User Input>'
