@@ -2,9 +2,10 @@ import json
 import os
 import re
 from openai import OpenAI
+from ai_support.ai_client import get_client
 
 
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+client = get_client()
 
 
 def generate_learning_topic(title, current_level='', target_level=''):

@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'learning_records.apps.LearningRecordsConfig',
     'ai_support.apps.AiSupportConfig',
+    'lecture.apps.LectureConfig',
 
     # 3rd party
     'allauth',
