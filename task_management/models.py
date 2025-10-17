@@ -1,4 +1,5 @@
 from django.db import models
+from config import settings_common
 
 
 # Category list
@@ -22,7 +23,7 @@ class Category(models.Model):
 
 # Intermediate model (CustomUser, Catogory)
 class UserInterestCategory(models.Model):
-    user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings_common.AUTH_USER_MODEL, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     class Meta:
@@ -38,7 +39,7 @@ class UserInterestCategory(models.Model):
 
 # Draft model before generating LearningTopics
 class DraftLearningGoal(models.Model):
-    user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings_common.AUTH_USER_MODEL, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     title = models.CharField(max_length=255)
@@ -61,7 +62,7 @@ class DraftLearningGoal(models.Model):
 
 # User's learning goal
 class LearningGoal(models.Model):
-    user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings_common.AUTH_USER_MODEL, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     draft = models.OneToOneField(DraftLearningGoal, blank=True, null=True, on_delete=models.SET_NULL)
 
@@ -96,7 +97,7 @@ class LearningMainTopic(models.Model):
         ('completed', 'Completed'),
     ]
 
-    user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings_common.AUTH_USER_MODEL, on_delete=models.CASCADE)
     learning_goal = models.ForeignKey(LearningGoal, on_delete=models.CASCADE)
 
     main_topic = models.CharField(max_length=255)
@@ -121,7 +122,7 @@ class LearningSubTopic(models.Model):
         ('completed', 'Completed'),
     ]
 
-    user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings_common.AUTH_USER_MODEL, on_delete=models.CASCADE)
     learning_goal = models.ForeignKey(LearningGoal, on_delete=models.CASCADE)
     main_topic = models.ForeignKey(
         LearningMainTopic, 

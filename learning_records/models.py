@@ -1,4 +1,5 @@
 from django.db import models
+from config import settings_common
 
 
 # Save user learning records(Raw Data)
@@ -11,7 +12,7 @@ class StudySession(models.Model):
     ]
 
     user = models.ForeignKey(
-        'accounts.CustomUser',
+        settings_common.AUTH_USER_MODEL,
         related_name='sessions',
         on_delete=models.CASCADE,
     )
