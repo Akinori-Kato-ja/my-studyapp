@@ -1,5 +1,6 @@
 from django.db import models
 from config import settings_common
+from lecture.utils import get_total_tokens_for_goal
 
 
 # Category list
@@ -76,12 +77,18 @@ class LearningGoal(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Obtain the total study time for each learning goal
     @property
     def actual_study_time(self):
-        return self.sessions.aggregate(
-            total=models.Sum('time_spent')
-        )['total'] or 0
+        return (
+            self.sessions
+            .aggregate(total=models.Sum('time_spent'))['total'] or 0
+        )
 
+    # Get the total tokens used for each learning objective
+    def total_tokens(self):
+        return get_total_tokens_for_goal(self)
+    
     def __str__(self):
         return self.title
 
