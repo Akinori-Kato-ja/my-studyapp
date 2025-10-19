@@ -6,6 +6,6 @@ from task_management.models import LearningMainTopic, LearningSubTopic
 
 
 # Create your views here.
-class AIGeneratedLectureView(LoginRequiredMixin, View):
+class GenerateLectureView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         pass
