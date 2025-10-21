@@ -51,7 +51,7 @@
                         {% for sub in main.sub_topics.all %}
                             <hr>
                             <li class='d-flex align-items-center gap-4'>
-                                <a href="#">・{{ sub.sub_topic }}/</a>
+                                <a href="{% url "lecture:lecture" sub.id %}">・{{ sub.sub_topic }}/</a>
                                 <a href="" class='btn btn-sm btn-success'>MCQ</a>
                                 <a href="" class='btn btn-sm btn-warning'>WRQ</a>
                             </li>                     

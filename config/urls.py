@@ -6,4 +6,5 @@ urlpatterns = [
     path('', include('task_management.urls')),
     path('accounts/', include('allauth.urls')),
     path('ai_support/', include('ai_support.urls')),
+    path('lecture/', include('lecture.urls')),
 ]

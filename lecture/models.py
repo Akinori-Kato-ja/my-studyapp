@@ -12,7 +12,7 @@ class LectureSession(models.Model):
     ended_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f'{self.user} - {self.sub_topic}'
+        return f'{self.user.username} - {self.sub_topic.sub_topic}'
     
 
 class LectureLog(models.Model):

@@ -4,5 +4,5 @@ from lecture import views
 
 app_name='lecture'
 urlpatterns = [
-    path('lecture/<int:topic_id>/', views.AIGeneratedLectureView.as_view(), name='lecture_generate'),
+    path('<int:topic_id>/', views.LectureView.as_view(), name='lecture'),
 ]

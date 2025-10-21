@@ -6,6 +6,16 @@ from task_management.models import LearningMainTopic, LearningSubTopic
 
 
 # Create your views here.
-class GenerateLectureView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        pass
+class LectureView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        topic = get_object_or_404(
+            LearningSubTopic,
+            id=self.kwargs['topic_id'],
+            user=self.request.user,
+        )
+        
+        context = {
+            'topic': topic,
+        }
+
+        return render(request, 'lecture/lecture.html', context)
