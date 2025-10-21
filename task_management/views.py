@@ -247,9 +247,11 @@ class LearningGoalDetailView(LoginRequiredMixin, generic.DetailView):
         goal = self.get_object()
 
         # Get main-topics and sub-topics at the same time
-        main_topics = LearningMainTopic.objects.filter(
-            learning_goal=goal,
-        ).prefetch_related('sub_topics')
+        main_topics = (
+            LearningMainTopic.objects
+            .filter(learning_goal=goal)
+            .prefetch_related('sub_topics')
+        )
 
         context["main_topics"] = main_topics
         return context

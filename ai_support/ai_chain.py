@@ -10,7 +10,3 @@ def get_llm():
         max_completion_tokens=1000,
     )
 
-def get_conversation_chain():
-    memory = ConversationBufferMemory()
-    llm = get_llm()
-    return ConversationChain(llm=llm, memory=memory, verbose=True)
