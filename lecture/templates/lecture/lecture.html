@@ -9,7 +9,29 @@
     <div class='my-div-style'>
         <div>
             <h1>Lecture by AI</h1>
-            <h3>&lt; Topic: {{ topic.sub_topic }} &gt;</h3>
+            <h3>&lt; Topic: {{ session.sub_topic.sub_topic }} &gt;</h3>
+        </div>
+
+        </div class="chat-box mb-3 border rounded p-3" style="max-height: 500px; overflow-y: auto;">
+            {% for log in logs %}
+                {% if log.role == 'user' %}
+                    <div class="text-end mb-2">
+                        <span class="badge bg-primary">You</span>
+                        <div class="d-inline-block bg-light p-2 rounded">{{ log.message }}</div>
+                    </div>
+                {% else %}
+                    <div class="text-start mb-2">
+                        <span class="badge bg-success">AI</span>
+                        <div class="d-inline-block bg-white border p-2 rounded">{{ response|safe }}</div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        <div>
+            <form method="post">
+            {% csrf_token %}
+            <textarea name="user_input" class="form-control mb-2" rows="3" placeholder="Your response..."></textarea>
+            <button class="btn btn-primary mb-5">Send</button>
+            </form>
         </div>
     </div>
 </div>
