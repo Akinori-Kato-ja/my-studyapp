@@ -19,7 +19,7 @@
                         <span class="badge bg-primary">You</span>
                         <div class="d-inline-block bg-light p-2 rounded">{{ log.message }}</div>
                     </div>
-                {% else %}
+                {% elif log.role == 'ai' %}
                     <div class="text-start mb-2">
                         <span class="badge bg-success">AI</span>
                         <div class="d-inline-block bg-white border p-2 rounded">{{ response|safe }}</div>

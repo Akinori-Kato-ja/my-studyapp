@@ -19,6 +19,7 @@ class LectureLog(models.Model):
     ROLE_CHOICES = [
         ('ai', 'AI'),
         ('user', 'USER'),
+        ('master', 'MASTER'),
     ]
 
     session = models.ForeignKey(LectureSession, on_delete=models.CASCADE, related_name='logs')
