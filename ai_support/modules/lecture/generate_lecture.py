@@ -11,9 +11,10 @@ def generate_lecture(session: LectureSession, user_input: str=None) -> str:
     llm = get_llm()
     memory = get_summary_memory(session.summary)
     chain = ConversationChain(llm=llm, memory=memory, verbose=True)
+    system_input = None
 
     if not user_input:
-        user_input = (
+        system_input = (
             'You are a good teacher, so please give your lecture based on the title.'
             f'Title: {session.sub_topic.sub_topic}'
             'The output must follow the rules below.'
@@ -23,8 +24,12 @@ def generate_lecture(session: LectureSession, user_input: str=None) -> str:
             '4.Please output in the language that the user uses.'
         )
 
-    # generate
-    response = chain.invoke({'input': user_input})
+        # generate
+        response = chain.invoke({'input': system_input})
+    else:
+        # generate
+        response = chain.invoke({'input': user_input})
+
     print(f'response: {response}')
     print(f'response[response]: {response["response"]}')
 
@@ -33,10 +38,12 @@ def generate_lecture(session: LectureSession, user_input: str=None) -> str:
     session.save()
 
     # Record logs in the database
+    message = system_input or user_input
+    role = 'master' if system_input else 'user'
     LectureLog.objects.create(
         session=session,
-        role='user',
-        message=user_input,
+        role=role,
+        message=message,
     )
     LectureLog.objects.create(
         session=session,
