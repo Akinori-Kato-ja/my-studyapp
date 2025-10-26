@@ -7,4 +7,5 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('ai_support/', include('ai_support.urls')),
     path('lecture/', include('lecture.urls')),
+    path('exam/', include('exam.urls')),
 ]

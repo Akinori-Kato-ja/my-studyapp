@@ -4,7 +4,12 @@ from . import views
 
 app_name = 'exam'
 urlpatterns = [
-    path('<int:topic_id>/mcq/', views.MultipleChoiceQuizView.as_view(), name='exam_mcq'),
-    path('<int:topic_id>/wt/', views.WrittenTaskView.as_view(), name='exam_wt'),
-    path('<int:topic_id>/ct/', views.ComprehensiveTestView.as_view(), name='exam_ct'),
+    # Multiple Choice Quiz
+    path('<int:topic_id>/mcq/main/', views.MultipleChoiceQuizView.as_view(), name='exam_mcq_main'),
+    path('<int:topic_id>/mcq/sub/', views.MultipleChoiceQuizView.as_view(), name='exam_mcq_sub'),
+    # Written Task
+    path('<int:topic_id>/wt/main/', views.WrittenTaskView.as_view(), name='exam_wt_main'),
+    path('<int:topic_id>/wt/sub/', views.WrittenTaskView.as_view(), name='exam_wt_sub'),
+    # Conprehensive Test
+    path('<int:goal_id>/ct/', views.ComprehensiveTestView.as_view(), name='exam_ct'),
 ]
