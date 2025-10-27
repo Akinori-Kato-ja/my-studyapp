@@ -2,10 +2,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404
 from django.views import generic, View
 from task_management.models import LearningGoal, LearningMainTopic, LearningSubTopic
-from .get_obj import get_topic_matching_url
 
 
-# Create your views here.
+# Multiple Choice Quiz
 class MultipleChoiceQuizView(LoginRequiredMixin, View):
     template_name = 'exam/exam.html'
     exam_format = 'Multiple Choice Quiz'
@@ -26,6 +25,8 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
             'title': title,
         })
 
+
+# Written Task
 class WrittenTaskView(LoginRequiredMixin, View):
     template_name = 'exam/exam.html'
     exam_format = 'Written Task'
@@ -47,6 +48,7 @@ class WrittenTaskView(LoginRequiredMixin, View):
         })
 
 
+# Comprehensive Test (All topics)
 class ComprehensiveTestView(LoginRequiredMixin, View):
     template_name = 'exam/exam.html'
     exam_format = 'Comprehensive Test'
