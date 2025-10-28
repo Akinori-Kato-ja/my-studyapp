@@ -11,28 +11,25 @@ class StudySession(models.Model):
         ('review', 'REVIEW')
     ]
 
-    user = models.ForeignKey(
-        settings_common.AUTH_USER_MODEL,
-        related_name='sessions',
-        on_delete=models.CASCADE,
-    )
+    user = models.ForeignKey(settings_common.AUTH_USER_MODEL, related_name='sessions', on_delete=models.CASCADE)
     learning_goal = models.ForeignKey(
         'task_management.LearningGoal',
-        related_name='sessions',
-        blank=True, null=True,
+        blank=True,
+        null=True,
         on_delete=models.CASCADE,
+        related_name='sessions',
     )
     main_topic = models.ForeignKey(
         'task_management.LearningMainTopic',
-        related_name='sessions',
         blank=True, null=True,
         on_delete=models.CASCADE,
+        related_name='sessions',
     )
     sub_topic = models.ForeignKey(
         'task_management.LearningSubTopic',
-        related_name='sessions',
         blank=True, null=True,
         on_delete=models.CASCADE,
+        related_name='sessions',
     )
 
     score = models.FloatField(blank=True, null=True)
