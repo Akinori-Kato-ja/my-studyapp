@@ -5,14 +5,16 @@ from lecture.utils import get_total_tokens_for_goal
 
 # Category list
 class Category(models.Model):
-    name = models.CharField(max_length=255)
-    is_global = models.BooleanField(default=False)
+    # Set when user creates their own category
     owner = models.ForeignKey(
-        'accounts.CustomUser',
-        null=True, blank=True,
-        on_delete=models.CASCADE,
+        'accounts.CustomUser', 
+        blank=True, 
+        null=True, 
+        on_delete=models.CASCADE, 
         related_name='own_categories',
     )
+    name = models.CharField(max_length=255)
+    is_global = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -64,8 +66,17 @@ class DraftLearningGoal(models.Model):
 # User's learning goal
 class LearningGoal(models.Model):
     user = models.ForeignKey(settings_common.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    draft = models.OneToOneField(DraftLearningGoal, blank=True, null=True, on_delete=models.SET_NULL)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        related_name='learning_goals',
+    )
+    draft = models.OneToOneField(
+        DraftLearningGoal,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
 
     title = models.CharField(max_length=255)
     current_level = models.TextField(blank=True, null=True)
@@ -73,7 +84,7 @@ class LearningGoal(models.Model):
     target_date = models.DateField(blank=True, null=True)
     total_score = models.FloatField(blank=True, null=True, default=0)
 
-    target_study_time = models.FloatField(blank=True, null=True, help_text='目標学習時間(h)')
+    target_study_time = models.FloatField(blank=True, null=True, help_text='Target completion time(h)')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -105,7 +116,11 @@ class LearningMainTopic(models.Model):
     ]
 
     user = models.ForeignKey(settings_common.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    learning_goal = models.ForeignKey(LearningGoal, on_delete=models.CASCADE)
+    learning_goal = models.ForeignKey(
+        LearningGoal,
+        on_delete=models.CASCADE,
+        related_name='main_topics',
+    )
 
     main_topic = models.CharField(max_length=255)
     status = models.CharField(
@@ -128,13 +143,17 @@ class LearningSubTopic(models.Model):
         ('incomplete', 'Incomplete'),
         ('completed', 'Completed'),
     ]
-
+    
     user = models.ForeignKey(settings_common.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    learning_goal = models.ForeignKey(LearningGoal, on_delete=models.CASCADE)
+    learning_goal = models.ForeignKey(
+        LearningGoal,
+        on_delete=models.CASCADE,
+        related_name='learning_goals',
+    )
     main_topic = models.ForeignKey(
         LearningMainTopic, 
-        related_name='sub_topics',
         on_delete=models.CASCADE,
+        related_name='sub_topics',
     )
 
     sub_topic = models.CharField(max_length=255)
