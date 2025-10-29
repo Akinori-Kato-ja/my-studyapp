@@ -2,26 +2,27 @@ import json
 import os
 import re
 from openai import OpenAI
+from ai_support.ai_client import get_client
 
 
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+client = get_client()
 
 
 def generate_learning_topic(title, current_level='', target_level=''):
     prompt = (
-        'Please generates a training task based on the following <User Input> and <Creation Rules>.'
-        '<User Input>'
-        f'Title:{title}'
-        f'Current level:{current_level}'
-        f'Target level:{target_level}'
-        '<Creation Rurles>'
-        '1. Divide the plan into main topics and subtopics, as shown in the example.'
-        '2. Each subtopic should take ~30-60 minutes of study.'
-        '3. Current level and target level are optional but should be considered if provided.'
-        '4. If optional inputs are empty, create the most standard learning path.'
-        '5. Output must be valid JSON (no extra text).'
-        '6. Output language should match the input language.'
-        '<Example Output>'
+        'Please generates a training task based on the following <User Input> and <Creation Rules>.\n'
+        '<User Input>\n'
+        f'Title:{title}\n'
+        f'Current level:{current_level}\n'
+        f'Target level:{target_level}\n'
+        '<Creation Rurles>\n'
+        '1. Divide the plan into main topics and subtopics, as shown in the example.\n'
+        '2. Each subtopic should take ~30-60 minutes of study.\n'
+        '3. Current level and target level are optional but should be considered if provided.\n'
+        '4. If optional inputs are empty, create the most standard learning path.\n'
+        '5. Output must be valid JSON (no extra text).\n'
+        '6. Output language should match the input language.\n'
+        '<Example Output>\n'
         """
 [
     {{
