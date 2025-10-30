@@ -19,7 +19,7 @@ def generate_lecture(session: LectureSession, user_input: str=None) -> str:
             '1.First, list the lecture topics.\n'
             '2.Insert line breaks where necessary to make it easier to read.\n'
             '3.If you include examples such as programming code, they must be separated from the text.\n'
-            '4.Please output in the language that the user uses.\n'
+            '4.Please output in the language used by the user, such as the language used in the title.\n'
         )
 
         # generate

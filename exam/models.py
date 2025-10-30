@@ -35,6 +35,7 @@ class ExamSession(models.Model):
         related_name='exams_sub',
     )
 
+    current_question_number = models.IntegerField(default=0)
     format = models.CharField(max_length=10, choices=FORMAT_CHOICES)
     summary = models.TextField(blank=True)
     used_tokens = models.IntegerField(default=0)
@@ -48,6 +49,11 @@ class ExamSession(models.Model):
             if not self.learning_goal or self.main_topic or self.sub_topic:
                 raise ValidationError('CT must be linked only to a learning goal.')
 
+    def recalculation_used_tokens(self):
+        """Recalculate total token usage based on all related ExamLogs."""
+        total = self.exams_session.aggregate(total_tokens=models.Sum('token_count'))['total_tokens'] or 0
+        self.used_tokens = total
+        self.save(update_fields=['used_tokens'])
 
     def __str__(self):
         if self.learning_goal:
@@ -67,7 +73,7 @@ class ExamLog(models.Model):
     )
     question_number = models.IntegerField(default=0)
     question = models.TextField()
-    answer = models.TextField()
+    answer = models.TextField(blank=True)
     token_count = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
