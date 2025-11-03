@@ -28,9 +28,9 @@
             {% endfor %}
         <div>
             <form method="post">
-            {% csrf_token %}
-            <textarea name="user_input" class="form-control mb-2" rows="3" placeholder="Your response..."></textarea>
-            <button class="btn btn-primary mb-5">Send</button>
+                {% csrf_token %}
+                <textarea name="user_input" class="form-control mb-2" rows="3" placeholder="Your response..."></textarea>
+                <button class="btn btn-primary mb-5">Send</button>
             </form>
         </div>
     </div>

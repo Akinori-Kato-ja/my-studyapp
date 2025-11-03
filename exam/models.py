@@ -51,17 +51,17 @@ class ExamSession(models.Model):
 
     def recalculation_used_tokens(self):
         """Recalculate total token usage based on all related ExamLogs."""
-        total = self.exams_session.aggregate(total_tokens=models.Sum('token_count'))['total_tokens'] or 0
+        total = self.logs.aggregate(total_tokens=models.Sum('token_count'))['total_tokens'] or 0
         self.used_tokens = total
         self.save(update_fields=['used_tokens'])
 
     def __str__(self):
         if self.learning_goal:
-            return f'Exam: {self.learning_goal.title} - {self.format}'
+            return f'{self.learning_goal.title} - {self.format}'
         elif self.main_topic:
-            return f'Exam: {self.main_topic.main_topic} - {self.format}'
+            return f'{self.main_topic.main_topic} - {self.format}'
         elif self.sub_topic:
-            return f'Exam: {self.sub_topic.sub_topic} - {self.format}'
+            return f'{self.sub_topic.sub_topic} - {self.format}'
         return f'Exam: (no topic)'
 
 
@@ -69,7 +69,7 @@ class ExamLog(models.Model):
     session = models.ForeignKey(
         ExamSession,
         on_delete=models.CASCADE,
-        related_name='exams_session',
+        related_name='logs',
     )
     question_number = models.IntegerField(default=0)
     question = models.TextField()
@@ -98,7 +98,7 @@ class ExamLog(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'Exam log: {self.session.user} - {self.session}'
+        return f'Log: {self.session.user} - {self.session} - No.{self.question_number}'
 
 
 class ExamEvaluation(models.Model):
@@ -109,7 +109,8 @@ class ExamEvaluation(models.Model):
     )
     score = models.FloatField()
     feedback = models.TextField()
+    token_count = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Evaluation for {self.exma_log}(score:{self.score})'
+        return f'Evaluation for {self.exam_log}(score:{self.score})'

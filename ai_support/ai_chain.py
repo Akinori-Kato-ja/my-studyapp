@@ -9,4 +9,3 @@ def get_llm():
         temperature=0.7,
         max_completion_tokens=1000,
     )
-
