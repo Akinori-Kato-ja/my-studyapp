@@ -22,7 +22,11 @@ class LectureLog(models.Model):
         ('master', 'MASTER'),
     ]
 
-    session = models.ForeignKey(LectureSession, on_delete=models.CASCADE, related_name='logs')
+    session = models.ForeignKey(
+        LectureSession,
+        on_delete=models.CASCADE,
+        related_name='logs'
+    )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     message = models.TextField()
     token_count = models.IntegerField(null=True, blank=True)

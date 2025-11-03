@@ -93,9 +93,11 @@ class LearningGoalListView(LoginRequiredMixin, generic.ListView):
             user=self.request.user,
             category=user_interest.category
         )
-        context["category"] = user_interest.category
-        context['user_interest'] = user_interest
-        context['learning_goal'] = learning_goal
+        context.update({
+            'category': user_interest.category,
+            'user_interest': user_interest,
+            'learning_goal': learning_goal,
+        })
         return context
     
 
@@ -156,9 +158,11 @@ class LearningTopicPreviewView(LoginRequiredMixin, generic.TemplateView):
         else:
             topics_data = []
 
-        context["draft"] = draft
-        context['user_interest'] = user_interest
-        context["topics"] = topics_data
+        context.update({
+            'draft': draft,
+            'user_interest': user_interest,
+            'topics': topics_data,
+        })
         return context
 
 
@@ -253,9 +257,11 @@ class LearningGoalDetailView(LoginRequiredMixin, generic.DetailView):
             .prefetch_related('sub_topics')
         )
 
-        context["main_topics"] = main_topics
+        context.update({
+            'main_topics': main_topics,
+            'question_number': 1,
+        })
         return context
-
 
 # Delete
 class LearningGoalDeleteView(LoginRequiredMixin, generic.DeleteView):
