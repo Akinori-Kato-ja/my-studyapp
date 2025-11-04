@@ -35,11 +35,50 @@ class ExamSession(models.Model):
         related_name='exams_sub',
     )
 
-    current_question_number = models.IntegerField(default=0)
+    attempt_number = models.PositiveBigIntegerField(default=1)  # Number of attempts per topic
+    current_question_number = models.IntegerField(default=0)  # Problem number to be attempted
     format = models.CharField(max_length=10, choices=FORMAT_CHOICES)
     summary = models.TextField(blank=True)
     used_tokens = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            # CT format is unique for learning_goal
+            models.UniqueConstraint(
+                fields=['user', 'learning_goal', 'format', 'attempt_number'],
+                condition=models.Q(format='ct', learning_goal__isnull=False),
+                name='unique_ct_attempt_per_goal'
+            ),
+
+            # When linked to main_topic in MCQ format.
+            models.UniqueConstraint(
+                fields=['user', 'main_topic', 'format', 'attempt_number'],
+                condition=models.Q(format='mcq', main_topic__isnull=False),
+                name='unique_mcq_attempt_per_main_topic',
+            ),
+
+            # When linked to sub_topic in MCQ format.
+            models.UniqueConstraint(
+                fields=['user', 'sub_topic', 'format', 'attempt_number'],
+                condition=models.Q(format='mcq', sub_topic__isnull=False),
+                name='unique_mcq_attempt_per_sub_topic',
+            ),
+
+            # When linked to main_topic in WT format.
+            models.UniqueConstraint(
+                fields=['user', 'main_topic', 'format', 'attempt_number'],
+                condition=models.Q(format='wt', main_topic__isnull=False),
+                name='unique_wt_attempt_per_main_topic',
+            ),
+
+            # When linked to sub_topic in WT format.
+            models.UniqueConstraint(
+                fields=['user', 'sub_topic', 'format', 'attempt_number'],
+                condition=models.Q(format='wt', main_topic__isnull=False),
+                name='unique_wt_attempt_per_sub_topic',
+            ),
+        ]
 
     def clean(self):
         if self.format in ('mcq', 'wt'):

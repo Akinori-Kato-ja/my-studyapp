@@ -5,7 +5,7 @@ from exam.models import ExamSession, ExamLog, ExamEvaluation
 from .exam_prompts import get_main_mcq_prompt, get_sub_mcq_prompt
 
 
-def generate_mcq(session: ExamSession):
+def generate_mcq(session: ExamSession) -> tuple[int, str]:
     llm = get_llm()
     memory = get_summary_memory(session.summary)
 
@@ -43,4 +43,4 @@ def generate_mcq(session: ExamSession):
     )
     session.current_question_number = exam_log.question_number
 
-    return response.content
+    return exam_log.question_number, response.content

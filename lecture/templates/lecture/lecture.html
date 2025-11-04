@@ -12,7 +12,7 @@
             <h3>&lt; Topic: {{ session.sub_topic.sub_topic }} &gt;</h3>
         </div>
 
-        </div class="chat-box mb-3 border rounded p-3" style="max-height: 500px; overflow-y: auto;">
+        <div class="chat-box mb-3 border rounded p-3" style="max-height: 500px; overflow-y: auto;">
             {% for log in logs %}
                 {% if log.role == 'user' %}
                     <div class="text-end mb-2">
@@ -26,6 +26,8 @@
                     </div>
                 {% endif %}
             {% endfor %}
+        </div>
+
         <div>
             <form method="post">
                 {% csrf_token %}
