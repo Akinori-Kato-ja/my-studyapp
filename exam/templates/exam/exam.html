@@ -8,7 +8,32 @@
 <div class='container'>
     <div class='my-div-style'>
         <div>
-            <h1><strong>"{{ format }}"</strong>~ {{ title }} ~</h1>
+            <h1><strong>"{{ format }}"</strong>~ {{ topic.title }} ~</h1>
+            <p><strong>Start multiple choice questions for "{{ topic.title }}".</strong></p>
+        </div>
+
+        <div class='chat-box mb-3 border rounded p-3' style="max-height: 500px; overflow-y: auto;" >
+            <div class="text-start mb-2">
+                <span class="badge bg-success">AI</span>
+                <div class="d-inline-block bg-white border p-2 rounded">
+                    <p>{{ question_nmumber }}.</p>
+                    {{ question|safe }}
+                </div>
+            </div>
+                {% if answer %}
+                    <div class="text-end mb-2">
+                        <span class="badge bg-primary">You</span>
+                        <div class="d-inline-block bg-light p-2 rounded">{{ log.message }}</div>
+                    </div>
+                {% endif %}
+        </div>
+
+        <div>
+            <form method="post" action='{% url url_name topic_id=topic.id question_nmumber=next_question_number %}'>
+                {% csrf_token %}
+                <textarea name="user_input" class="form-control mb-2" rows="1" placeholder="Your response..."></textarea>
+                <button class="btn btn-primary mb-5">Send</button>
+            </form>
         </div>
     </div>
 </div>

@@ -1,3 +1,4 @@
+import markdown
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404
 from django.utils.safestring import mark_safe
@@ -17,41 +18,52 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
 
         if 'main' in url_name:
             topic = get_object_or_404(LearningMainTopic, id=topic_id, user=self.request.user)
-            session, created = ExamSession.objects.get_or_create(
+            session = ExamSession.objects.create(
                 user=self.request.user,
                 main_topic=topic,
                 format='mcq',
             )
-            title = topic.main_topic
+            
         elif 'sub' in url_name:
             topic = get_object_or_404(LearningSubTopic, id=topic_id, user=self.request.user)
-            session, created = ExamSession.objects.get_or_create(
+            session = ExamSession.objects.create(
                 user=self.request.user,
                 sub_topic=topic,
                 format='mcq',
             )
-            title = topic.sub_topic
 
-        if created or not session.logs.exists():
-            question = generate_mcq(session=session)
-        else:
-            last_log = session.logs.last()
-            question = last_log.question if last_log else 'No logs.'
+        current_question_number, question = generate_mcq(session=session)
+        
         if not question:
             context = {'message': 'Problem generation failed, please try again.'}
             return render(request, 'exam/exam_error.html', context)
 
+        html_response = mark_safe(markdown.markdown(question))
 
         return render(request, self.template_name, {
+            'url_name': url_name,
             'format': self.exam_format,
-            'title': title,
-            'question': question,
+            'topic': topic,
+            'question': html_response,
+            'current_question_number': current_question_number,
+            'next_question_number': current_question_number + 1, 
+            'answer': '',
         })
     
-    def post(self, request, topic_id):
+    def post(self, request, topic_id, question_number):
         url_name = request.resolver_match.url_name
 
-        # 
+        answer = request.POST.get('user_input', '').strip()
+
+        if 'main' in url_name:
+            topic = get_object_or_404(LearningMainTopic, id=topic_id, user=self.request.user)
+            session = get_object_or_404(
+                ExamSession,
+                user=self.request.user,
+                main_topic=topic,
+                format='mcq',
+                current_question_number=question_number, 
+            )
 
 
 # Written Task

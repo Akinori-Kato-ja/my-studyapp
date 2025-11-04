@@ -59,10 +59,12 @@ class LectureView(LoginRequiredMixin, View):
         )
 
         user_input = request.POST.get('user_input', '').strip()
-        generated = generate_lecture(session=session, user_input=user_input)
+        response = generate_lecture(session=session, user_input=user_input)
+
+        html_response = mark_safe(markdown.markdown(response))
 
         return render(request, self.template_name, {
             'session': session,
             'logs': session.logs.all(),
-            'generated': generated,
+            'response': html_response,
         })
