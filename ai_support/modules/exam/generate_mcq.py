@@ -21,10 +21,11 @@ def generate_mcq(session: ExamSession) -> tuple[int, str]:
         print('Failed to get learning topics.')
         return None
 
+    # Generate
     response = llm.invoke(prompt)
 
-    print(f'response: {response.content}')
-    print(f'response[token_usage]: {response.response_metadata}')
+    print(f'response[content]: {response.content}')
+    print(f'response[metadata]: {response.response_metadata}')
 
     # Extract token information
     usage = response.response_metadata.get('token_usage', {})
@@ -43,4 +44,4 @@ def generate_mcq(session: ExamSession) -> tuple[int, str]:
     )
     session.current_question_number = exam_log.question_number
 
-    return exam_log.question_number, response.content
+    return session.current_question_number ,response.content

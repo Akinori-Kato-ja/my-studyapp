@@ -1,5 +1,5 @@
 # Multiple Choice Quiz (main_topic (=sub_topics))
-def get_main_mcq_prompt(sub_topics: list) -> str:
+def get_main_mcq_prompt(sub_topics: str) -> str:
     prompt_text = (
         'You are a good teacher, Please create one multiple-choice question about the following topics.\n'
         f'topics: {sub_topics}\n'

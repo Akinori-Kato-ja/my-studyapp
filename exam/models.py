@@ -35,11 +35,12 @@ class ExamSession(models.Model):
         related_name='exams_sub',
     )
 
-    attempt_number = models.PositiveBigIntegerField(default=1)  # Number of attempts per topic
-    current_question_number = models.IntegerField(default=0)  # Problem number to be attempted
+    attempt_number = models.PositiveIntegerField(default=0)  # Number of attempts per topic
+    current_question_number = models.PositiveIntegerField(default=0)  # Problem number to be attempted
     format = models.CharField(max_length=10, choices=FORMAT_CHOICES)
     summary = models.TextField(blank=True)
-    used_tokens = models.IntegerField(default=0)
+    used_tokens = models.PositiveBigIntegerField(default=0)
+    total_score = models.FloatField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -75,7 +76,7 @@ class ExamSession(models.Model):
             # When linked to sub_topic in WT format.
             models.UniqueConstraint(
                 fields=['user', 'sub_topic', 'format', 'attempt_number'],
-                condition=models.Q(format='wt', main_topic__isnull=False),
+                condition=models.Q(format='wt', sub_topic__isnull=False),
                 name='unique_wt_attempt_per_sub_topic',
             ),
         ]
@@ -110,10 +111,10 @@ class ExamLog(models.Model):
         on_delete=models.CASCADE,
         related_name='logs',
     )
-    question_number = models.IntegerField(default=0)
+    question_number = models.PositiveIntegerField(default=0)
     question = models.TextField()
     answer = models.TextField(blank=True)
-    token_count = models.IntegerField(default=0)
+    token_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -148,7 +149,7 @@ class ExamEvaluation(models.Model):
     )
     score = models.FloatField()
     feedback = models.TextField()
-    token_count = models.IntegerField(default=0)
+    token_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

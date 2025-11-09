@@ -8,15 +8,16 @@ from .exam_prompts import get_mcq_evaluation_prompt
 from exam.models import ExamEvaluation
 
 
-def generate_mcq_evaluation(log: ExamLog) -> dict:  # {'score': float, 'explanation': str}
+def generate_mcq_evaluation(log: ExamLog) -> tuple[float, str]:  # {'score': float, 'explanation': str}
     llm = get_llm()
     memory = get_summary_memory(log.session.summary)
 
     prompt = get_mcq_evaluation_prompt(question=log.question, answer=log.answer)
+    # Generate
     response = llm.invoke(prompt)
 
-    print(f'response: {response.content}')
-    print(f'response[token_usage]: {response.response_metadata}')
+    print(f'response[content]: {response.content}')
+    print(f'response[metadata]: {response.response_metadata}')
 
     try:
         generated = json.loads(response.content)
@@ -24,7 +25,7 @@ def generate_mcq_evaluation(log: ExamLog) -> dict:  # {'score': float, 'explanat
         json_match = re.search(r'\{.*}', response.content)
         if json_match:
             json_str = json_match.group(0)
-            generated = json.loads(json_str)
+            generated = json.loads(json_str.replace("'", '"'))
         else:
             print('No JSON data was found.')
             generated = None
@@ -41,7 +42,7 @@ def generate_mcq_evaluation(log: ExamLog) -> dict:  # {'score': float, 'explanat
         try:
             generated['score'] = float(generated['score'])
         except (TypeError, ValueError):
-            raise ValueError(f'The score value could not be converted to a float type.: {generated["score"]}')
+            raise ValueError(f'The score value could not be converted to a float type.: {generated['score']}')
 
     print(f'generated: {generated}')
 
@@ -60,4 +61,4 @@ def generate_mcq_evaluation(log: ExamLog) -> dict:  # {'score': float, 'explanat
         token_count=total_tokens,
     )
 
-    return generated
+    return generated['score'], generated['explanation']

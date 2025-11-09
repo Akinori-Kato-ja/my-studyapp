@@ -29,7 +29,7 @@
         </div>
 
         <div>
-            <form method="post" action='{% url url_name topic_id=topic.id question_nmumber=next_question_number %}'>
+            <form method="post" action='{% url url_name topic.id %}'>
                 {% csrf_token %}
                 <textarea name="user_input" class="form-control mb-2" rows="1" placeholder="Your response..."></textarea>
                 <button class="btn btn-primary mb-5">Send</button>

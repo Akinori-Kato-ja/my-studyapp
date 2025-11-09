@@ -12,26 +12,7 @@ class StudySession(models.Model):
     ]
 
     user = models.ForeignKey(settings_common.AUTH_USER_MODEL, related_name='sessions', on_delete=models.CASCADE)
-    learning_goal = models.ForeignKey(
-        'task_management.LearningGoal',
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        related_name='sessions',
-    )
-    main_topic = models.ForeignKey(
-        'task_management.LearningMainTopic',
-        blank=True, null=True,
-        on_delete=models.CASCADE,
-        related_name='sessions',
-    )
-    sub_topic = models.ForeignKey(
-        'task_management.LearningSubTopic',
-        blank=True, null=True,
-        on_delete=models.CASCADE,
-        related_name='sessions',
-    )
-
+    exam_session = models.ForeignKey('exam.ExamSession', on_delete=models.CASCADE, related_name='study_sessions')
     score = models.FloatField(blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
     time_spent = models.FloatField(blank=True, null=True, help_text='Study time in this session.(hours)')
