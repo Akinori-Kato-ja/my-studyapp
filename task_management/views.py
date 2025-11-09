@@ -259,7 +259,6 @@ class LearningGoalDetailView(LoginRequiredMixin, generic.DetailView):
 
         context.update({
             'main_topics': main_topics,
-            'question_number': 1,
         })
         return context
 

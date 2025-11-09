@@ -37,14 +37,14 @@
         <div class='d-flex align-items-center gap-4'>
             <h2> &lt; Learning Topics &gt;</h2>
             <a href="" class='btn btn-sm btn-primary'>Lecture</a>
-            <a href="{% url "exam:exam_ct" goal_id=goal.id question_number=question_number %}" class='btn btn-sm btn-info'>CT</a>
+            <a href="{% url "exam:exam_ct" goal.id %}" class='btn btn-sm btn-info'>CT</a>
         </div>
         {% for main in main_topics %}
             <hr>
             <div class='d-flex align-items-center gap-4'>
                 <h3>・{{ main.main_topic }}</h3>
-                <a href="{% url "exam:exam_mcq_main" topic_id=main.id question_number=question_number %}" class='btn btn-sm btn-success'>MCQ</a>
-                <a href="{% url "exam:exam_wt_main" topic_id=main.id question_number=question_number %}" class='btn btn-sm btn-warning'>WT</a>
+                <a href="{% url "exam:exam_mcq_main" main.id %}" class='btn btn-sm btn-success'>MCQ</a>
+                <a href="{% url "exam:exam_wt_main" main.id  %}" class='btn btn-sm btn-warning'>WT</a>
             </div>
                 {% if main.sub_topics.all %}
                     <ul>
@@ -52,8 +52,8 @@
                             <hr>
                             <li class='d-flex align-items-center gap-4'>
                                 <a href="{% url "lecture:lecture" sub.id %}">・{{ sub.sub_topic }}/</a>
-                                <a href="{% url "exam:exam_mcq_sub" topic_id=sub.id question_number=question_number %}" class='btn btn-sm btn-success'>MCQ</a>
-                                <a href="{% url "exam:exam_wt_sub" topic_id=sub.id question_number=question_number %}" class='btn btn-sm btn-warning'>WT</a>
+                                <a href="{% url "exam:exam_mcq_sub" sub.id %}" class='btn btn-sm btn-success'>MCQ</a>
+                                <a href="{% url "exam:exam_wt_sub" sub.id %}" class='btn btn-sm btn-warning'>WT</a>
                             </li>                     
                         {% endfor %}
                     </ul>
