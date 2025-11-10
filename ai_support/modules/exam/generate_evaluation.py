@@ -42,7 +42,7 @@ def generate_mcq_evaluation(log: ExamLog) -> tuple[float, str]:  # {'score': flo
         try:
             generated['score'] = float(generated['score'])
         except (TypeError, ValueError):
-            raise ValueError(f'The score value could not be converted to a float type.: {generated['score']}')
+            raise ValueError(f'The score value could not be converted to a float type.: {generated["score"]}')
 
     print(f'generated: {generated}')
 

@@ -69,18 +69,20 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
             context = {'message': 'Problem generation failed, please try again.'}
             return render(request, 'exam/exam_error.html', context)
 
-        html_response_question = mark_safe(markdown.markdown(question))
+        html_question = mark_safe(markdown.markdown(question))
 
-        return render(request, self.template_name, {
+        context = {
             # for display
             'format': self.format_text,  
             'topic': topic_obj,
             # generated
-            'current_question_number': question_number,
-            'question': html_response_question,
+            'first_question_number': question_number,
+            'first_question_html': html_question,
             # used in URL parameters
             'url_name': url_name, 
-        })
+        }
+
+        return render(request, self.template_name, context)
     
     def post(self, request, topic_id):
         url_name = request.resolver_match.url_name

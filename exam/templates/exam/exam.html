@@ -16,16 +16,10 @@
             <div class="text-start mb-2">
                 <span class="badge bg-success">AI</span>
                 <div class="d-inline-block bg-white border p-2 rounded">
-                    <p>{{ question_nmumber }}.</p>
-                    {{ question|safe }}
+                    <p>{{ first_question_nmumber }}.</p>
+                    {{ first_question_html|safe }}
                 </div>
             </div>
-                {% if answer %}
-                    <div class="text-end mb-2">
-                        <span class="badge bg-primary">You</span>
-                        <div class="d-inline-block bg-light p-2 rounded">{{ log.message }}</div>
-                    </div>
-                {% endif %}
         </div>
 
         <div>
