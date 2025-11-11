@@ -1,5 +1,6 @@
 import markdown
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views import generic, View
 from django.urls import reverse
@@ -41,8 +42,7 @@ class LectureView(LoginRequiredMixin, View):
 
         return render(request, self.template_name, {
             'session': session,
-            'logs': session.logs.all(),
-            'response': html_response,
+            'first_response': html_response,
             'summary': summary,
         })
         
@@ -63,8 +63,5 @@ class LectureView(LoginRequiredMixin, View):
 
         html_response = mark_safe(markdown.markdown(response))
 
-        return render(request, self.template_name, {
-            'session': session,
-            'logs': session.logs.all(),
-            'response': html_response,
-        })
+
+        return JsonResponse({'next_response': html_response})

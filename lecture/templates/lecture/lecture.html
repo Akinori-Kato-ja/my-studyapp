@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block head %}
+    <meta name='csrf_token' contents='{{ csrf_token }}'>
+{% endblock head %}
+
 {% block title %}Lecture|ASCENSION{% endblock title %}
 {% block body_class %}white-page{% endblock body_class %}
 
@@ -10,31 +14,26 @@
         <div>
             <h1>Lecture by AI</h1>
             <h3>&lt; Topic: {{ session.sub_topic.sub_topic }} &gt;</h3>
+            <p><strong>"{{ session.sub_topic.sub_topic }}"</strong> lecture begins.</p>
+            <p>If you have any questions, please type them in the chat screen and press the <strong>Send</strong> button. Press the <strong>End</strong> button to end the lecture.</p>
         </div>
 
-        <div class="chat-box mb-3 border rounded p-3" style="max-height: 500px; overflow-y: auto;">
-            {% for log in logs %}
-                {% if log.role == 'user' %}
-                    <div class="text-end mb-2">
-                        <span class="badge bg-primary">You</span>
-                        <div class="d-inline-block bg-light p-2 rounded">{{ log.message }}</div>
-                    </div>
-                {% elif log.role == 'ai' %}
-                    <div class="text-start mb-2">
-                        <span class="badge bg-success">AI</span>
-                        <div class="d-inline-block bg-white border p-2 rounded">{{ response|safe }}</div>
-                    </div>
-                {% endif %}
-            {% endfor %}
+        <div id='chat-box' class="chat-box mb-3 border rounded p-3" style="max-height: 500px; overflow-y: auto;">
+            <div class="text-start mb-2">
+                <span class="badge bg-success">AI</span>
+                <div class="d-inline-block bg-white border p-2 rounded">{{ first_response|safe }}</div>
+            </div>
         </div>
 
-        <div>
-            <form method="post">
-                {% csrf_token %}
-                <textarea name="user_input" class="form-control mb-2" rows="3" placeholder="Your response..."></textarea>
-                <button class="btn btn-primary mb-5">Send</button>
-            </form>
-        </div>
+        <form id='chat-form' data-url='{% url "lecture:lecture" session.sub_topic.sub_topic.id %}'>
+            <textarea id='user_input' name="user_input" class="form-control mb-2" rows="3" placeholder="Your response..."></textarea>
+            <div>
+                <button type='submit' class="btn btn-primary mb-5">Send</button>
+                <button id='end-lecture' type='button' class='btn btn-secondary' >End</button>
+            </div>
+        </form>
     </div>
 </div>
+
+<script src='{% static "js/lecture_chat.js" %}'></script>
 {% endblock contents %}
