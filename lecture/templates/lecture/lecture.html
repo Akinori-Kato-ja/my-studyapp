@@ -20,12 +20,12 @@
 
         <div id='chat-box' class="chat-box mb-3 border rounded p-3" style="max-height: 500px; overflow-y: auto;">
             <div class="text-start mb-2">
-                <span class="badge bg-success">AI</span>
+                <span class="badge bg-success mb-1">AI</span>
                 <div class="d-inline-block bg-white border p-2 rounded">{{ first_response|safe }}</div>
             </div>
         </div>
 
-        <form id='chat-form' data-url='{% url "lecture:lecture" session.sub_topic.sub_topic.id %}'>
+        <form id='chat-form' data-url='{% url "lecture:lecture" session.sub_topic.id %}'>
             <textarea id='user_input' name="user_input" class="form-control mb-2" rows="3" placeholder="Your response..."></textarea>
             <div>
                 <button type='submit' class="btn btn-primary mb-5">Send</button>
