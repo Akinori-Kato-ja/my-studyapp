@@ -6,6 +6,7 @@ from config import settings_common
 class LectureSession(models.Model):
     user = models.ForeignKey(settings_common.AUTH_USER_MODEL, on_delete=models.CASCADE)
     sub_topic = models.ForeignKey('task_management.LearningSubTopic', on_delete=models.CASCADE)
+    lecture_count = models.PositiveIntegerField(default=0)
     summary = models.TextField(blank=True)
     total_tokens = models.IntegerField(default=0)
     started_at = models.DateTimeField(auto_now_add=True)

@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const userInput = document.getElementById('user_input');
     const endLectureButton = document.getElementById('end-lecture');
     const chatUrl = chatForm.dataset.url;
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('contents')
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
     // Generate and add callouts
     function appendMessage(sender, text='', isLoading=false) {
@@ -19,14 +19,14 @@ document.addEventListener('DOMContentLoaded', function() {
             wrapper.innerHTML = `
                 <div class='text-end'>
                     <span class="badge bg-success mb-1">AI</span>
-                    <div class="d-inline-block bg-white border p-2 rounded">$(content)</div>
+                    <div class="d-inline-block bg-white border p-2 rounded">${content}</div>
                 </div>`;
         } else {
             wrapper.classList.add('justify-content-end');
             wrapper.innerHTML = `
                 <div class='text-end'>
                     <span class="badge bg-primary mb-1">You</span>
-                    <div class="d-inline-block bg-light border p-2 rounded">$(content)</div>
+                    <div class="d-inline-block bg-light border p-2 rounded">${content}</div>
                 </div>`;
         }
 
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-CSRFToken': csrfToken,
             },
-            body: new URLSearchParams({ user_input: userInput })
+            body: new URLSearchParams({ user_input: userMessage })
         })
         .then(response => response.json())
         .then(data => {
