@@ -28,13 +28,14 @@ class LectureView(LoginRequiredMixin, View):
 
         summary = None
         # Generate the first lecture
-        if created or not session.logs.exists():
+
+        if created:
+            session.lecture_count = 1
             response = generate_lecture(session=session)
         else:
             # Second time onwards
-            summary = session.summary if session.summary else 'The content of the previous lecture could not be retrieved.'
-            last_ai_log = session.logs.filter(role='ai').last()
-            response = last_ai_log.message if last_ai_log else 'No lecture yet.'
+            session.lecture_count += 1
+            response = generate_lecture(session=session)
 
         print(f'Type(response): {type(response)}')
         html_response = mark_safe(markdown.markdown(response))
@@ -43,7 +44,6 @@ class LectureView(LoginRequiredMixin, View):
         return render(request, self.template_name, {
             'session': session,
             'first_response': html_response,
-            'summary': summary,
         })
         
     def post(self, request, topic_id):
