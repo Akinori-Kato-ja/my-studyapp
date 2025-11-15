@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (sender === 'AI') {
             wrapper.classList.add('justify-content-start');
             wrapper.innerHTML = `
-                <div class='text-end'>
+                <div class='text-start'>
                     <span class="badge bg-success mb-1">AI</span>
                     <div class="d-inline-block bg-white border p-2 rounded">${content}</div>
                 </div>`;
@@ -35,17 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return wrapper.querySelector('div.d-inline-block');
     }
 
-    // typing style
-    function typeAIMessage(container, text, interval=30) {
-        container.innerHTML = '';
-        let i = 0;
-        const timer = setInterval(() => {
-            container.innerHTML += text[i];
-            i++;
-            chatBox.scrollTop = chatBox.scrollHeight;
-            if (i >= text.length) clearInterval(timer);
-        }, interval);
-    }
 
     // chat transmission
     chatForm.addEventListener('submit', function (e) {
@@ -68,8 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            const text = data.next_response.replace(/\n/g, '<br>');
-            typeAIMessage(aiContainer, text);
+            const html = data.next_response;
+            aiContainer.innerHTML = html;
+            chatBox.scrollTop = chatBox.scrollHeight;
         })
         .catch(err => {
             aiContainer.innerHTML = 'An error has occurred';
