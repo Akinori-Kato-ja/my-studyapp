@@ -12,23 +12,27 @@
             <p><strong>Start multiple choice questions for "{{ topic.title }}".</strong></p>
         </div>
 
-        <div class='chat-box mb-3 border rounded p-3' style="max-height: 500px; overflow-y: auto;" >
+        <div id='chat-box' class='chat-box mb-3 border rounded p-3' style="max-height: 500px; overflow-y: auto;" >
             <div class="text-start mb-2">
-                <span class="badge bg-success">AI</span>
+                <span class="badge bg-success">Question</span>
                 <div class="d-inline-block bg-white border p-2 rounded">
-                    <p>{{ first_question_nmumber }}.</p>
+                    {{ first_question_nmumber }}.
                     {{ first_question_html|safe }}
                 </div>
             </div>
         </div>
 
         <div>
-            <form method="post" action='{% url url_name topic.id %}'>
+            <form id='chat-form' data-url='{% url url_name topic.id %}'>
                 {% csrf_token %}
-                <textarea name="user_input" class="form-control mb-2" rows="1" placeholder="Your response..."></textarea>
-                <button class="btn btn-primary mb-5">Send</button>
+                <textarea id='user_input' name="user_input" class="form-control mb-2" rows="3" placeholder="Your response..."></textarea>
+                <div>
+                    <button type='submit' class="btn btn-primary mb-5">Send</button>
+                </div>
             </form>
         </div>
     </div>
 </div>
+
+<script src='{% static "js/exam_chat" %}'></script>
 {% endblock contents %}

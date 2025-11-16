@@ -1,5 +1,7 @@
+import json
 import markdown
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.safestring import mark_safe
 from django.views import generic, View
@@ -16,6 +18,7 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
 
     def get(self, request, topic_id):
         url_name = request.resolver_match.url_name
+        full_url_name = f'exam:{url_name}'
 
         if 'main' in url_name:
             topic_obj = get_object_or_404(LearningMainTopic, id=topic_id, user=self.request.user)
@@ -79,14 +82,18 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
             'first_question_number': question_number,
             'first_question_html': html_question,
             # used in URL parameters
-            'url_name': url_name, 
+            'url_name': full_url_name, 
         }
 
         return render(request, self.template_name, context)
     
     def post(self, request, topic_id):
         url_name = request.resolver_match.url_name
-        answer = request.POST.get('user_input', '').strip()
+        full_url_name = f'exam:{url_name}'
+
+        data = json.loads(request.body)
+        answer = data.get('user_input')
+
         attempt_number = request.session.get('attempt_number')
 
         if 'main' in url_name:
@@ -137,7 +144,7 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
 
             html_response_question = mark_safe(markdown.markdown(question))
 
-            return render(request, self.template_name, {
+            return JsonResponse({
                 # for display
                 'format': self.format_text,  
                 'topic': topic_obj,
@@ -147,7 +154,7 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
                 'next_question_number': question_number,
                 'next_question': html_response_question,
                 # used in URL parameters
-                'url_name': url_name, 
+                'url_name': full_url_name, 
             })
         else:
             total_token = total_score = 0
