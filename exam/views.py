@@ -21,49 +21,35 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
         full_url_name = f'exam:{url_name}'
 
         if 'main' in url_name:
-            topic_obj = get_object_or_404(LearningMainTopic, id=topic_id, user=self.request.user)
-            session, created = ExamSession.objects.get_or_create(
-                user=self.request.user,
-                main_topic=topic_obj,
-                format='mcq',
-            )
-
-            if created:
-                session.attempt_number = 1
-            # If there is a history of the same test, update the number of attempts and create new session data.
-            else:
-                last_attempt_number = session.attempt_number
-                current_attempt_number = last_attempt_number + 1
-                session = ExamSession.objects.create(
-                    user=self.request.user,
-                    main_topic=topic_obj,
-                    format='mcq',
-                    attempt_number=current_attempt_number,
-                )
+            topic_obj = get_object_or_404(LearningMainTopic, id=topic_id, user=request.user)
+            topic_filter = {'main_topic': topic_obj}
 
         elif 'sub' in url_name:
-            topic_obj = get_object_or_404(LearningSubTopic, id=topic_id, user=self.request.user)
-            session, created = ExamSession.objects.get_or_create(
-                user=self.request.user,
-                sub_topic=topic_obj,
-                format='mcq',
-            )
+            topic_obj = get_object_or_404(LearningSubTopic, id=topic_id, user=request.user)
+            topic_filter = {'sub_topic': topic_obj}
 
-            if created:
-                session.attempt_number = 1
-            # If there is a history of the same test, update the number of attempts and create new session data.
-            else:
-                last_attempt_number = session.attempt_number
-                current_attempt_number = last_attempt_number + 1
-                session = ExamSession.objects.create(
-                    user=self.request.user,
-                    sub_topic=topic_obj,
-                    format='mcq',
-                    attempt_number=current_attempt_number,
-                )
+        else:
+            raise ValueError('The URL name does not contain "main" or "sub".')
+        
+        last_session = (
+            ExamSession.objects
+            .filter(user=request.user, format='mcq', **topic_filter)
+            .order_by('-attempt_number')
+            .first()
+        )
+
+        attempt_number = last_session.attempt_number + 1 if last_session else 1
+
+        # create session
+        session = ExamSession.objects.create(
+            user=request.user,
+            format='mcq',
+            attempt_number=attempt_number,
+            **topic_filter,
+        )
 
         # Manage test data with a unique attempt_number
-        request.session['attempt_number'] = session.attempt_number
+        request.session['attempt_number'] = attempt_number
 
         # Generate Multiple Choice Quiz
         question_number, question = generate_mcq(session=session)
@@ -98,23 +84,21 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
 
         if 'main' in url_name:
             topic_obj = get_object_or_404(LearningMainTopic, id=topic_id, user=self.request.user)
-            session = get_object_or_404(
-                ExamSession,
-                user=self.request.user,
-                main_topic=topic_obj,
-                format='mcq',
-                attempt_number=attempt_number,
-            )
+            topic_filter = {'main_topic': topic_obj}
 
-        if 'sub' in url_name:
+        elif 'sub' in url_name:
             topic_obj = get_object_or_404(LearningSubTopic, id=topic_id, user=self.request.user)
-            session = get_object_or_404(
-                ExamSession,
-                user=self.request.user,
-                sub_topic=topic_obj,
-                format='mcq',
-                attempt_number=attempt_number,
-            )
+            topic_filter = {'sub_topic': topic_obj}
+        else:
+            raise ValueError('The URL name does not contain "main" or "sub".')
+
+        session = get_object_or_404(
+            ExamSession,
+            user=self.request.user,
+            format='mcq',
+            attempt_number=attempt_number,
+            **topic_filter,
+        )
 
         current_question_number = session.current_question_number
 
@@ -133,7 +117,21 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
             exam_log.answer = answer
             # generate evaluation
             score, explanation = generate_mcq_evaluation(log=exam_log)
-            html_response_explanation = mark_safe(markdown.markdown(explanation))
+            html_explanation = mark_safe(markdown.markdown(explanation))
+
+        print(f'score: {score}')
+        print(f'explanation: {explanation}')
+
+        response_data = {
+            # for display
+            'format': self.format_text,
+            'topic': topic_obj,
+            # generated data
+            'score': score,
+            'explanation': html_explanation,
+            # used in URL parameters
+            'url_name': full_url_name,
+        }
 
         if current_question_number <= 5:
             # generate next question
@@ -142,20 +140,14 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
                 context = {'message': 'Problem generation failed, please try again.'}
                 return render(request, 'exam/exam_error.html', context)
 
-            html_response_question = mark_safe(markdown.markdown(question))
+            html_question = mark_safe(markdown.markdown(question))
 
-            return JsonResponse({
-                # for display
-                'format': self.format_text,  
-                'topic': topic_obj,
-                # generated
-                'score': score,
-                'explanation': html_response_explanation,
+            response_data.update({
+                # generated data
                 'next_question_number': question_number,
-                'next_question': html_response_question,
-                # used in URL parameters
-                'url_name': full_url_name, 
+                'next_question': html_question,
             })
+
         else:
             total_token = total_score = 0
             for log in session.logs.all():
@@ -165,17 +157,11 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
             session.used_tokens = total_token
             session.total_score = total_score
 
-            return render(request, 'exam/result.html', {
-                # for display
-                'format': self.format_text,  
-                'topic': topic_obj,
-                # generated
-                'score': score,
-                'explanation': explanation,
-                'total_score': total_score,
-                # used in URL parameters
-                'url_name': url_name, 
+            response_data.update({
+                'total_score': total_score
             })
+        
+        return JsonResponse(response_data)
 
 
 # Written Task

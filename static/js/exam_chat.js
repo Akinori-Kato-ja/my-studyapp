@@ -1,9 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     const chatBox = document.getElementById('chat-box');
     const chatForm = document.getElementById('chat-form');
-    const userInput = document.getElementById('user-input');
+    const userInput = document.getElementById('user_input');
+    const nextButton = document.getElementById('next')
     const chatUrl = chatForm.dataset.url;
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    let latesNextQuestion = null;
 
     function appendMessage(sender, text='', isLoading=false) {
         const wrapper = document.createElement('div');
@@ -53,8 +56,13 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            const html = data.next_question;
-            aiContainer.innerHTML = html;
+            aiContainer.innerHTML = `
+                <strong>Score:</strong> ${data.score}<br>
+                <strong>Explanation:</strong> ${data.explanation}
+            `;
+
+            latesNextQuestion = data.next_question;
+
             chatBox.scrollTop = chatBox.scrollHeight;
         })
         .catch(err => {
@@ -62,4 +70,10 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error: ', err);
         });
     });
-})
+    nextButton.addEventListener('click', () => {
+        if (latesNextQuestion) {
+            appendMessage('AI', latesNextQuestion);
+            latesNextQuestion = null;
+        }
+    });
+});
