@@ -8,6 +8,7 @@ def get_main_mcq_prompt(sub_topics: str) -> str:
         '2.Insert line breaks where necessary to make it easier to read.\n'
         '3.If you include examples such as programming code, they must be separated from the text.\n'
         '4.Please output in the language used by the user, such as the language used in the topics title.\n'
+        '5.It only generates questions and answer choices.\n'
     )
 
     return prompt_text
@@ -22,6 +23,7 @@ def get_sub_mcq_prompt(sub_topic: str) -> str:
         '2.Insert line breaks where necessary to make it easier to read.\n'
         '3.If you include examples such as programming code, they must be separated from the text.\n'
         '4.Please output in the language used by the user, such as the language used in the topic title.\n'
+        '5.It only generates questions and answer choices.\n'
     )
 
     return prompt_text

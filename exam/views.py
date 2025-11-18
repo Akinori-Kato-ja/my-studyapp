@@ -102,6 +102,12 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
 
         current_question_number = session.current_question_number
 
+        # default value
+        score = 0.0
+        explanation = 'A problem has occurred.'
+        html_explanation = mark_safe(markdown.markdown(explanation))
+
+
         try:
             exam_log = ExamLog.objects.get(
                 session=session,
