@@ -52,7 +52,7 @@ def generate_mcq_evaluation(log: ExamLog) -> tuple[float, str]:  # {'score': flo
 
     # Save the summary to the database
     log.session.summary = memory.buffer
-    log.session.save()
+    log.session.save(update_fields=['summary'])
 
     ExamEvaluation.objects.create(
         exam_log=log,

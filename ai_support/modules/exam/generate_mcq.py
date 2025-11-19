@@ -31,10 +31,6 @@ def generate_mcq(session: ExamSession) -> tuple[int, str]:
     usage = response.response_metadata.get('token_usage', {})
     total_tokens = usage.get('total_tokens', 0)
 
-    # Save the summary to the database
-    session.summary = memory.buffer
-    session.save()
-
     # Record logs in the database
     exam_log = ExamLog.objects.create(
         session=session,
@@ -42,6 +38,12 @@ def generate_mcq(session: ExamSession) -> tuple[int, str]:
         answer='', # Initialization
         token_count=total_tokens,
     )
+
+    # Save the summary to the database
+    session.summary = memory.buffer
+    session.save(update_fields=['summary'])
+    
     session.current_question_number = exam_log.question_number
+    session.save(update_fields=['current_question_number']) 
 
     return session.current_question_number ,response.content
