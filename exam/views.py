@@ -85,10 +85,12 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
         if 'main' in url_name:
             topic_obj = get_object_or_404(LearningMainTopic, id=topic_id, user=self.request.user)
             topic_filter = {'main_topic': topic_obj}
+            topic_title = topic_obj.main_topic
 
         elif 'sub' in url_name:
             topic_obj = get_object_or_404(LearningSubTopic, id=topic_id, user=self.request.user)
             topic_filter = {'sub_topic': topic_obj}
+            topic_title = topic_obj.sub_topic
         else:
             raise ValueError('The URL name does not contain "main" or "sub".')
 
@@ -131,7 +133,7 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
         response_data = {
             # for display
             'format': self.format_text,
-            'topic': topic_obj,
+            'title': topic_title,
             # generated data
             'score': score,
             'explanation': html_explanation,
@@ -162,6 +164,7 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
             
             session.used_tokens = total_token
             session.total_score = total_score
+            session.save(update_fields=['used_tokens', 'total_score'])
 
             response_data.update({
                 'total_score': total_score
