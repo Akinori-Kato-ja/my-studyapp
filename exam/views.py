@@ -23,13 +23,17 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
         if 'main' in url_name:
             topic_obj = get_object_or_404(LearningMainTopic, id=topic_id, user=request.user)
             topic_filter = {'main_topic': topic_obj}
+            title = topic_obj.main_topic
 
         elif 'sub' in url_name:
             topic_obj = get_object_or_404(LearningSubTopic, id=topic_id, user=request.user)
             topic_filter = {'sub_topic': topic_obj}
+            title = topic_obj.sub_topic
 
         else:
             raise ValueError('The URL name does not contain "main" or "sub".')
+        
+        id = topic_obj.id
         
         last_session = (
             ExamSession.objects
@@ -63,12 +67,13 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
         context = {
             # for display
             'format': self.format_text,  
-            'topic': topic_obj,
+            'title': title,
             # generated
             'first_question_number': question_number,
             'first_question_html': html_question,
             # used in URL parameters
             'url_name': full_url_name, 
+            'topic_id': id, 
         }
 
         return render(request, self.template_name, context)
@@ -93,6 +98,8 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
             topic_title = topic_obj.sub_topic
         else:
             raise ValueError('The URL name does not contain "main" or "sub".')
+        
+        id = topic_obj.id
 
         session = get_object_or_404(
             ExamSession,
@@ -139,6 +146,7 @@ class MultipleChoiceQuizView(LoginRequiredMixin, View):
             'explanation': html_explanation,
             # used in URL parameters
             'url_name': full_url_name,
+            'topic_id': id,
         }
 
         if current_question_number <= 5:
