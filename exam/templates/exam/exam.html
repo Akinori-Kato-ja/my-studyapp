@@ -14,7 +14,7 @@
 
         <div id='chat-box' class='chat-box mb-3 border rounded p-3' style="max-height: 500px; overflow-y: auto;" >
             <div class="text-start mb-2">
-                <span class="badge bg-success">Question</span>
+                <span class="badge bg-success">AI</span>
                 <div class="d-inline-block bg-white border p-2 rounded">
                     {{ first_question_nmumber }}.
                     {{ first_question_html|safe }}
@@ -23,7 +23,7 @@
         </div>
 
         <div>
-            <form id='chat-form' data-url='{% url url_name topic.id %}'>
+            <form id='chat-form' data-url='{% url url_name topic_id %}'>
                 {% csrf_token %}
                 <textarea id='user_input' name="user_input" class="form-control mb-2" rows="3" placeholder="Your response..."></textarea>
                 <div>

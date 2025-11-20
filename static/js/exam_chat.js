@@ -18,22 +18,22 @@ document.addEventListener('DOMContentLoaded', function() {
         if (sender === 'AI') {
             wrapper.classList.add('justify-content-start');
             wrapper.innerHTML = `
-                <div class='text-start'>a
+                <div class='text-start d-flex flex-column'>
                     <span class='badge bg-success mb-1'>AI</span>
-                    <div class='d-inline-block bg-white border p-2 rounded'>${content}</div>
+                    <div class='message bg-white border p-2 rounded'>${content}</div>
                 </div>`;
         } else {
             wrapper.classList.add('justify-content-end');
             wrapper.innerHTML =`
-                <div class='text-ned'>a
+                <div class='text-end d-flex flex-column'>
                     <span class='badge bg-primary mb-1'>You</span>
-                    <div class='d-inline-block bg-light border p-2 rounded'>${content}</div>
+                    <div class='message bg-light border p-2 rounded'>${content}</div>
                 </div>`;
         }
 
         chatBox.appendChild(wrapper);
         chatBox.scrollTop = chatBox.scrollHeight;
-        return wrapper.querySelector('div.d-inline-block')
+        return wrapper.querySelector('.message')
     }
 
     chatForm.addEventListener('submit', function (e) {
